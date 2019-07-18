@@ -1,61 +1,153 @@
 import React,{Component} from 'react'
-import { Layout, Menu, Breadcrumb, Icon ,Link} from 'antd';
+import {Link,withRouter} from 'react-router-dom'
+import { Menu,Icon } from 'antd';
 import logo from '../../assets/images/logo.png'
 import './index.less'
+import menuList from '../../config/configMenu'
 
 
 
 
-const { Header, Content, Footer, Sider } = Layout;
 const { SubMenu } = Menu;
 
 
-export default class LeftNav extends Component{
+ class LeftNav extends Component{
+
+    // getMeauList=(meauList)=>{
+    //     return meauList.map((item)=>{
+    //         if(!item.children){
+    //             return(
+    //                 <Menu.Item key={item.key}>
+    //                     <Link to={item.key}>
+    //                         <Icon type={item.icon} />
+    //                         <span>{item.title}</span>
+    //                     </Link>
+                        
+    //                 </Menu.Item>
+    //             )
+    //         }else{
+    //             return (
+    //                 <SubMenu
+    //                     key={item.key}
+    //                     title={
+    //                     <span>
+    //                         <Icon type={item.icon} />
+    //                         <span>{item.title}</span>
+    //                     </span>
+    //                     }
+    //                 >
+    //                    {this.getMeauList(item.children)}
+    //                 </SubMenu>
+    //             )
+    //         }
+    //     })
+    // }
+
+    getMenuNodes2=(menuList)=>{
+        const path=this.props.location.pathname
+        return menuList.reduce((pre,item)=>{
+            if(!item.children){
+                pre.push(
+                     <Menu.Item key={item.key}>
+                        <Link to={item.key}>
+                            <Icon type={item.icon}/>
+                            <span>{item.title}</span>
+                        </Link>
+                    </Menu.Item>
+                )
+            }else{
+                const cItem=item.children.find((cItem)=>cItem.key===path)
+                if(cItem){
+                    this.openKey=item.key
+                }
+                pre.push((
+                    <SubMenu
+                        key={item.key}
+                        title={
+                            <span>
+                <Icon type={item.icon}/>
+                <span>{item.title}</span>
+              </span>
+                        }
+                    >
+                        {this.getMenuNodes2(item.children)}
+                    </SubMenu>
+                ))
+            }
+            return pre
+        },[])
+
+    }
+
+
+
+
+    // getMenuNodes=(menuList)=>{
+    //     return menuList.map((item)=>{
+    //         if(!item.children){
+    //             return (
+    //                 <Menu.Item key={item.key}>
+    //                   <Link to={item.key}>
+    //                     <Icon type={item.icon} />
+    //                     <span>{item.title}</span>
+    //                   </Link>
+    //                 </Menu.Item>
+    //             )
+    //         }else{
+    //             // 如果当前请求路由与当前菜单的某个子菜单的key匹配, 将菜单的key保存为openKey
+    //             // const cItem=item.childern.find((cItem)=>{cItem.key===path})
+    //             // if(cItem){
+    //             //     this.openKey=item.key
+    //             // }
+    //             return(
+    //                     <SubMenu 
+    //                     key={item.key}
+    //                         title={
+    //                         <span>
+    //                             <Icon type={item.icon} />
+    //                             <span>{item.title}</span>
+    //                         </span>
+    //                     }
+    //                     >
+    //                         {this.getMenuNodes(item.childern)}
+    //                     </SubMenu>
+    //             )
+    //         }
+           
+    //     })
+                        
+                        
+    // }
+
+
+    componentWillMount(){
+        this.menuNodes=this.getMenuNodes2(menuList)
+    }
+
+
+    
     render(){
+        let path=this.props.location.pathname
         return (
             <div className='left-nav'>
                      
-                        <a className='left-nav-header'>
-                            <img src={logo}></img>
+                        <Link className='left-nav-header' to="/home">
+                            <img src={logo} alt='logo'></img>
                             <h1>硅谷后台</h1>
-                        </a>
+                        </Link>
                        
-                    
+                        
                   
                    
-                    <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline">
-                        <Menu.Item key="1">
-                        <Icon type="pie-chart" />
-                        <span>Option 1</span>
-                        </Menu.Item>
-                        
-                        <SubMenu
-                        key="/products"
-                        title={
-                          <span>
-                            <Icon type="mail" />
-                            <span>商品</span>
-                          </span>
-                        }
-                        >
-                        <Menu.Item key="/category">
-                                <a >
-                                    <Icon type="folder-open" />
-                                    <span>品类管理</span>
-                                </a>
-                                </Menu.Item>
-                                <Menu.Item key="/product">
-                                <a>
-                                    <Icon type="filter" />
-                                    <span>商品管理</span>
-                                </a>
-                            </Menu.Item>
-                        </SubMenu>
-                        
+                    <Menu 
+                    theme="dark" 
+                    selectedKeys={[path]}
+                    defaultOpenKeys={[this.openKey]} 
+                    mode="inline">
+                     {this.menuNodes}
                     </Menu>
-              
-                
             </div>
         )
     }
 }
+export default withRouter(LeftNav)
