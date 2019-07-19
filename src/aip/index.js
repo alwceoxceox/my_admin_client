@@ -1,27 +1,76 @@
 import ajax from './ajax'
 import jsonp from 'jsonp'
-import { resolve } from 'path';
-import { reject } from 'q';
+import { message } from 'antd';
 
-const URL=''
+const BASE=''
  
 
 
-export const reqLogin=(username,password)=>ajax.post(URL+'/login',{username,password})
+export const reqLogin=(username,password)=>ajax.post(BASE+'/login',{username,password})
 
+// return new Promise((resolve, reject) => {
+//     const url = `http://api.map.baidu.com/telematics/v3/weather?location=${city}&output=json&ak=3p49MVra6urFRGOT9s8UBWr2`
+//     // 发送jsonp请求
+//     jsonp(url, {}, (err, data) => {
+//       console.log('jsonp()', err, data)
+//       // 如果成功了
+//       if (!err && data.status==='success') {
+//         // 取出需要的数据
+//         const {dayPictureUrl, weather} = data.results[0].weather_data[0]
+//         resolve({dayPictureUrl, weather})
+//       } else {
+//         // 如果失败了
+//         message.error('获取天气信息失败!')
+//       }
 
-export const reqWeather(city){
-   return new Promise(resolve,reject)=>{
+//     })
+//   })
+export const reqWeather = (city) => {
 
+    return new Promise((resolve, reject) => {
+      const url = `http://api.map.baidu.com/telematics/v3/weather?location=${city}&output=json&ak=3p49MVra6urFRGOT9s8UBWr2`
+      // 发送jsonp请求
+      jsonp(url, {}, (err, data) => {
+        console.log('jsonp()', err, data)
+        // 如果成功了
+        if (!err && data.status==='success') {
+          // 取出需要的数据
+          const {dayPictureUrl, weather} = data.results[0].weather_data[0]
+          resolve({dayPictureUrl, weather})
+        } else {
+          // 如果失败了
+          message.error('获取天气信息失败!')
+        }
   
-    const url =`http://api.map.baidu.com/telematics/v3/weather?location=${city}&output=json&ak=3p49MVra6urFRGOT9s8UBWr2`
-    jsonp(url,{},(error,data)=>{
-            if(data.error===0&&!error){
-            const {dayPictureUrl,weather}=data.results[0].weather_data[0]
-            resolve(dayPictureUrl,weather)
-            }else{
-                error.message('获取天气信息失败')
-            }
-        })
-    }
-}
+      })
+    })
+  }
+
+
+
+  // 获取分类列表
+  export const reqCategorys=()=>ajax(BASE+'/manage/category/list')
+
+
+
+
+  // 添加分类
+
+
+  export const reqAddCategory=(categoryName)=>ajax.post(BASE+'/manage/category/add',{categoryName})
+
+  // 更新分类
+  export const reqUpdateCategory=({categoryId,categoryName})=>ajax.post(BASE+'/manage/category/update',{categoryId,categoryName})
+
+
+  /* 获取商品分页列表 */
+export const reqProducts = (pageNum, pageSize) => ajax(BASE + '/manage/product/list', {
+  params: { // 包含所有query参数的对象
+    pageNum,
+    pageSize
+  }
+})
+
+
+
+

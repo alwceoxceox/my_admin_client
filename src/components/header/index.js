@@ -2,7 +2,7 @@ import React,{Component} from 'react'
 import {withRouter} from 'react-router-dom'
 import StorageUtila from '../../utils/storageUtil'
 import MemoryUtils from '../../utils/memoryUtil'
-import ajax from '../../aip'
+import {reqWeather} from '../../aip'
 import { Modal } from 'antd';
 import MenuList from '../../config/configMenu'
 import {formateDate} from '../../utils/dateUtil' 
@@ -16,7 +16,7 @@ const { confirm } = Modal
  class Header extends Component{
      state={
          currentTime:formateDate(Date.now()),
-         dayUrl:'',
+         dayPictureUrl:'',
         weather:''
      }
     
@@ -60,13 +60,22 @@ const { confirm } = Modal
        return title
     }
 
-
-    componentDidMount(){
+    //    获取天气
+    getWeather=async()=>{
+        
+       let {dayPictureUrl,weather}=await reqWeather('北京')
+        this.setState({dayPictureUrl,weather})
+    }
+    getTime=()=>{
+            // 每隔1s获取当前时间, 并更新状态数据currentTime
         this.timerId=setInterval(()=>{
-           this.setState({
-               currentTime:formateDate(Date.now())
-           }) 
+            const currentTime=formateDate(Date.now())
+            this.setState({currentTime})
         },1000)
+    }
+    componentDidMount(){
+       this.getTime()
+       this.getWeather()
     }
     componentWillUnmount(){
         clearInterval(this.timerId)
@@ -75,7 +84,7 @@ const { confirm } = Modal
     render(){
        const user=MemoryUtils.user
        let title=this.getTitle();
-       let {currentTime,dayUrl,weather}=this.state
+       let {currentTime,dayPictureUrl,weather}=this.state
         return(
             <div className='header'>
                 <header className='header-top'>
@@ -86,7 +95,7 @@ const { confirm } = Modal
                     <div className='header-botton-left' >{title}</div>
                     <div className='header-botton-right' >
                         <span>{currentTime}</span>
-                        <img src='http://api.map.baidu.com/images/weather/day/xiaoyu.png' alt='tianqi'></img>
+                        <img src={dayPictureUrl} alt={weather}></img>
                         <span>晴</span>
                     </div>
                 </header>
