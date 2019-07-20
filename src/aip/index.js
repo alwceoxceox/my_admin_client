@@ -52,6 +52,10 @@ export const reqWeather = (city) => {
   export const reqCategorys=()=>ajax(BASE+'/manage/category/list')
 
 
+// 根据分类id获取分类
+export const reqCategory=(categoryId)=>ajax(BASE+'/manage/category/info',{
+  params:{categoryId}
+})
 
 
   // 添加分类
@@ -73,4 +77,26 @@ export const reqProducts = (pageNum, pageSize) => ajax(BASE + '/manage/product/l
 
 
 
+/* 根据Name/desc搜索产品分页列表 */
+export const reqSearchProducts=( {
+  pageNum,
+  pageSize,
+  searchName,
+  searchType // 它的值是'productName'或者'productDesc'
+})=>ajax(BASE+'/manage/product/search',{
+  params:{
+    pageNum,
+    pageSize,
+    [searchType]: searchName
+  }
+})
 
+
+// 上架或下架的状态
+export const reqUpdateStatus=(productId,status)=>ajax.post('/manage/product/updateStatus',{productId,status})
+
+
+
+
+// 删除图片
+export const reqDeleteImg=(name)=>ajax.post('/manage/img/delete',{name})

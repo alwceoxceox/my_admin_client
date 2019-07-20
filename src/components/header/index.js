@@ -96,7 +96,7 @@ const { confirm } = Modal
                     <div className='header-botton-right' >
                         <span>{currentTime}</span>
                         <img src={dayPictureUrl} alt={weather}></img>
-                        <span>晴</span>
+                        <span>{weather}</span>
                     </div>
                 </header>
             </div>
