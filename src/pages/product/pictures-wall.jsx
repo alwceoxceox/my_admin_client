@@ -1,6 +1,11 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { Upload, Icon, Modal, message } from 'antd';
 import { reqDeleteImg } from '../../aip';
+import {BASE_IMG} from '../../utils/canstants'
+
+
+
 
 function getBase64(file) {
   return new Promise((resolve, reject) => {
@@ -12,6 +17,14 @@ function getBase64(file) {
 }
 
 export default class PicturesWall extends React.Component {
+  // 声明
+  static propTypes={
+    imgs:PropTypes.array
+  }
+
+
+
+
   state = {
     previewVisible: false, // 标识是否显示大图预览
     previewImage: '', // 大图的url或者base64值
@@ -25,7 +38,7 @@ export default class PicturesWall extends React.Component {
     ],
   };
 
-  handleCancel = () => this.setState({ previewVisible: false });
+  handleCancel = () => this.setState({ previewVisible: false })
 
   /* 
   进行大图预览的回调函数
@@ -41,6 +54,8 @@ export default class PicturesWall extends React.Component {
       previewVisible: true,
     });
   };
+
+
 
   /* 
   在file的状态发生改变的监听回调
@@ -71,8 +86,33 @@ export default class PicturesWall extends React.Component {
     // 更新状态
     this.setState({ fileList })
   }
+
+
+
   // 获取图片名称
-  getImgs=()=>this.state.fileList.map((file)=>file=file.name)
+  getImgs=()=>this.state.fileList.map((file)=>file.name);
+
+
+
+componentWillMount(){
+  const imgs=this.props.imgs
+  if( imgs&& imgs.length>0){
+    const fileList = imgs.map((img,index)=>(
+       { // 文件信息对象 file
+        uid: -index, // 唯一标识
+        name: img, // 文件名
+        status: 'done', // 状态有：uploading done error removed
+        url:BASE_IMG+img  // 图片的url
+      }))
+    this.setState({ fileList })
+  }
+  
+}
+
+  
+
+
+
 
   render() {
     const { previewVisible, previewImage, fileList } = this.state;

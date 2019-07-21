@@ -1,19 +1,18 @@
-
 /* 
 商品添加/更新的路由组件
 */
 import React, { Component } from 'react'
-import { Redirect } from 'react-router-dom'
 import {
   Card,
   Icon,
   Form,
   Input,
   Select,
-  Button
+  Button,
+  message
 } from 'antd'
-
-import {reqCategorys} from '../../aip'
+import RichTextEditor from './rich-text-editor'
+import {reqCategorys,reqAddUpdateProduct} from '../../aip'
 import PicturesWall from './pictures-wall'
 import LinkButton from '../../components/link-button'
 import memoryUtil from '../../utils/memoryUtil';
@@ -26,6 +25,7 @@ const Option = Select.Option
      super(props)
     // 创建ref容器, 并保存到组件对象
     this.pwRef=React.createRef()
+    this.editorRef=React.createRef()
    }
   state={
     categorys:[]
@@ -62,6 +62,32 @@ handleSubmit = (event) => {
      if (!err) {
        const {name, desc, price, categoryId} = values
        console.log('发送请求', name, desc, price, categoryId)
+
+
+
+
+      //  收集上传图片数组
+      const imgs=this.pwRef.current.getImgs()
+      // 输入商品的详情的标签字符串
+      const detail=this.editorRef.current.getDetail()
+
+
+
+      // 封装product对象
+      const product ={name, desc, price, categoryId,imgs,detail}
+      if(this.isUpdate){
+        product._id=this.product._id
+      }
+      // 发请求添加或修改
+
+      const result=await reqAddUpdateProduct(product)
+      if(result.status===0){
+        message.success(`${this.isUpdate?'修改':'添加'}成功了`)
+        this.props.history.replace('/product')
+      }else{
+        message.error(result.msg)
+      }
+
      } 
    })
 }
@@ -94,7 +120,7 @@ componentWillMount () {
     }
     return (
       <Card title={title}>
-       <Form {...formLayout}>
+       <Form {...formLayout} onSubmit={this.handleSubmit}>
        <Item label="商品名称">
             {getFieldDecorator('name', {
               initialValue: product.name,
@@ -136,10 +162,10 @@ componentWillMount () {
             )}
           </Item>
           <Item label="商品图片">
-            <PicturesWall ref={this.pwRef}/>
+            <PicturesWall ref={this.pwRef} imgs={product.imgs}/>
           </Item>
-          <Item label="商品详情">
-            <div>商品详情组件</div>
+          <Item label="商品详情" wrapperCol= {{ span: 20 }}>
+            <RichTextEditor ref={this.editorRef}  detail={product.detail}/>
           </Item>
           <Item>
             <Button type="primary" htmlType="submit">提交</Button>

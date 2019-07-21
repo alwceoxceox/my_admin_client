@@ -100,3 +100,10 @@ export const reqUpdateStatus=(productId,status)=>ajax.post('/manage/product/upda
 
 // 删除图片
 export const reqDeleteImg=(name)=>ajax.post('/manage/img/delete',{name})
+
+
+// 添加或修改商品
+export const reqAddUpdateProduct=(product)=>ajax.post( BASE + '/manage/product/' + (product._id ? 'update' : 'add'), product)
+
+
+
