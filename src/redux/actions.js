@@ -17,3 +17,20 @@ export const increment=(number)=>({type:INCREMENT,number})
 
 
 export const decrement=(number)=>({type:DECREMENT,number})
+
+
+
+
+/* 
+创建异步增加的action
+异步action是一个函数, 参数是dispatch函数
+  1). 执行异步代码
+  2). 完成后, 分发一个同步action
+*/
+export function incrementAsync(number) {
+    return dispatch=>{
+        setTimeout(()=>{
+            dispatch(increment(number))
+        },500)
+    }
+}
