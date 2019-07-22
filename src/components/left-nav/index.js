@@ -47,10 +47,7 @@ const { SubMenu } = Menu;
         },[])
 
     }
-    componentWillMount(){
-        this.menuNodes=this.getMenuNodes2(menuList)
-    }
-
+   
 
     componentWillMount () {
         this.menuNodes = this.getMenuNodes2(menuList)

@@ -107,3 +107,12 @@ export const reqAddUpdateProduct=(product)=>ajax.post( BASE + '/manage/product/'
 
 
 
+// 获取所有角色的列表
+export const reqRoles =()=>ajax(BASE+'/manage/role/list')
+// 添加角色
+export const reqAddRoles =(roleName)=>ajax.post(BASE+'/manage/role/add',{roleName})
+// 更新角色
+export const reqUpdateRoles =(role)=>ajax.post(BASE+'/manage/role/update',{role}) 
+// 获取所有用户的列表
+// 删除指定用户
+// 添加/更新用户
