@@ -1,36 +1,63 @@
 /* 
-包含N个用于创建action对象的工厂函数
+包含n个用于创建action对象/函数的工厂函数(action creator)
 */
-import {INCREMENT,DECREMENT} from './action-type'
+
+import {reqLogin} from '../aip'
+import {
+    SET_HEADER_TITLE,
+    RECEIVE_USER,
+    SHOW_ERROR,
+    LOGOUT
+} from './action-type'
+import storageUtil from '../utils/storageUtil'
+/* 
+设置头部标题的同步action
+*/
+export const setHeaderTitle=(headerTitle)=>({type:SET_HEADER_TITLE,data:headerTitle})
+
+/* 
+接收用户的同步action
+*/
+export const receiveUser=(user)=>({type:RECEIVE_USER,user})
+
+/* 
+显示错误信息的同步action
+*/
+export const showError=(errorMsg)=>({type:SHOW_ERROR,errorMsg})
 
 
 
 /* 
-创建增加的action
+退出登陆的同步action
 */
-export const increment=(number)=>({type:INCREMENT,number})
+
+
+export const logout=()=>{
+    // 删除local中的user
+    storageUtil.removeUtil()
+    // 返回一个action对象
+   return {type:LOGOUT}
+}
 
 
 /* 
-创建减少的action
+登陆的异步action
 */
 
 
-export const decrement=(number)=>({type:DECREMENT,number})
-
-
-
-
-/* 
-创建异步增加的action
-异步action是一个函数, 参数是dispatch函数
-  1). 执行异步代码
-  2). 完成后, 分发一个同步action
-*/
-export function incrementAsync(number) {
-    return dispatch=>{
-        setTimeout(()=>{
-            dispatch(increment(number))
-        },500)
+export function login(username,password){
+    return async dispatch=>{
+        // 1. 发登陆的异步ajax请求
+        const result=await reqLogin(username,password)
+        // 2. 请求结束, 分发同步action
+        // 2.1. 如果成功了, 分发成功的同步action
+        if(result.status===0){
+            const user=result.data
+            storageUtil.saveUtil(user)
+            dispatch(receiveUser(user))
+        }else{// 2.1. 如果失败了, 分发失败的同步action
+            const msg=result.msg
+            dispatch(showError(msg))
+        }
     }
 }

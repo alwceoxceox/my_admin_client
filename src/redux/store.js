@@ -1,10 +1,26 @@
-// redux最核心的管理对象: store
+// /* 
+// redux最核心的管理对象
+// */
+// import {createStore,applyMiddleware} from 'redux'
+// import thunk from 'redux-thunk'
+// import {composeWithDevTools} from 'redux-devtools-extension'
+// import reducer from './reducer'
+
+
+// export default createStore(reducer, composeWithDevTools(applyMiddleware(thunk)))
+
+
+
+
+
+
+/* 
+redux最核心的管理对象
+*/
 import {createStore, applyMiddleware} from 'redux'
 import thunk from 'redux-thunk'
-import reducer from './reducer'
 import {composeWithDevTools} from 'redux-devtools-extension'
 
-// 根据指定的reducer函数, 产生一个store对象
-// store对象内部管理新状态数据, 状态数据的初始值为第一次调用reducer()的返回值
-// 应用异步中间件
-export default createStore(reducer,composeWithDevTools(applyMiddleware(thunk)))
+import reducer from './reducer'
+
+export default createStore(reducer, composeWithDevTools(applyMiddleware(thunk)))
